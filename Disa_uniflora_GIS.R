@@ -56,13 +56,16 @@ vegsub %>% group_by(National_) %>%
 install.packages("rinat")
 library(rinat)
 
-pc <- get_inat_obs(taxon_name = "Protea cynaroides",
-                   bounds = c(-35, 18, -33.5, 18.5),
-                   maxresults = 1000)
-du <- get_inat_obs(taxon_name = "Disa uniflora",
-                   bounds = c(-35, 18, -33.5, 18.5),
-                   maxresults = 1000)
+#du <- get_inat_obs(taxon_name = "Disa uniflora",
+                   #maxresults = 1000)
 head(du)
+
+#Lesser double collared sunbird
+cc <- get_inat_obs(taxon_name = "Cinnyris chalybeus",
+                   maxresults = 1000)
+# Orange breasted sunbird
+av <- get_inat_obs(taxon_name = "Anthobaphes violacea",
+                   maxresults = 1000)
 
 # Filtering to make sure I only get the research grade observations
 du <- du %>% filter(positional_accuracy<46 &
@@ -70,14 +73,27 @@ du <- du %>% filter(positional_accuracy<46 &
                       !is.na(latitude) &
                       captive_cultivated == "false" &
                       quality_grade == "research")
+cc <- cc %>% filter(positional_accuracy<46 &
+                      latitude<0 &
+                      !is.na(latitude) &
+                      captive_cultivated == "false" &
+                      quality_grade == "research")
+av <- av %>% filter(positional_accuracy<46 &
+                      latitude<0 &
+                      !is.na(latitude) &
+                      captive_cultivated == "false" &
+                      quality_grade == "research")
+
 class(du)
 
 #I need to turn this from a data frame into a spatial object
 du <- st_as_sf(du, coords = c("longitude", "latitude"), crs = 4326)
+cc <- st_as_sf(cc, coords = c("longitude", "latitude"), crs = 4326)
+av <- st_as_sf(av, coords = c("longitude", "latitude"), crs = 4326)
 class(du)
 
 #Plotting the points!
-ggplot() + geom_sf(data = du)
+ggplot() + geom_sf(data = cc)
 
 # Adding basemaps to my plot
 install.packages("rosm")
@@ -86,26 +102,39 @@ install.packages("leaflet")
 library(rosm)
 library(ggspatial)
 library(leaflet)
+library(prettymapr)
+
+#Plot a basic map
+ggplot() +
+  annotation_map_tile(type = "osm", progress = "none") +
+  geom_sf(data = cc) #this won't work
 
 ggplot() +
   annotation_map_tile(type = "osm", progress = "none") +
-  geom_sf(data=du) #this won't work
+  geom_sf(data = av)
 
+# Plot an interactive map
 leaflet() %>%
   addTiles(group = "Default") %>%
-  addCircleMarkers(data = du,
-                   group = "Disa uniflora",
-                   radius = 3,
-                   color = "red") #Why are these soooo mismatched??
+  addCircleMarkers(data = cc,
+                   group = "Cinnyris chalybeus",
+                   radius = 1,
+                   color = "green") %>%
+  addCircleMarkers(data = av,
+                   group = "Anthobaphes violacea",
+                   radius = 1,
+                   color = "orange")
 
 #Getting the remnants layer
 vegr <- st_read("cape_peninsula/cape_peninsula/veg/Vegetation_Indigenous_Remnants.shp")
 hmm <- st_intersection(du, vegr)
 st_crs(du)
 #Making the crs the same for both
-du <- st_transform(du, st_crs(vegr))
+av <- st_transform(av, st_crs(vegr))
+cc <- st_transform(cc, st_crs(vegr))
 
 # Another attempt at plotting data
 ggplot() +
   annotation_map_tile(type = "osm", progress = "none") +
-  geom_sf(data=du) #this won't work
+  geom_sf(data=cc, color = "green") +
+  geom_sf(data=av, color = "orange")
