@@ -1,0 +1,153 @@
+---
+title: "GIS_Project"
+format:
+  html:
+    theme: default
+    number-sections: true
+---
+This is a GIS assignment as a requirement for BIO4000W, where I will be plotting observational data on a map. The packages needed for this assignment are: "sf", "tidyverse", "rinat", "rosm", "ggspatial", "leaflet", "prettymapr" and "terra".
+```{r}
+library(sf)
+library(tidyverse)
+library(rinat)
+library(rosm)
+library(ggspatial)
+library(leaflet)
+library(prettymapr)
+library(terra)
+```
+
+The "rinat" package will be used to extract data directly from iNaturalist into R. In my case, I'm interested in the Lesser double collared sunbird (Cinnyris chalybeus) and the Orange breasted sunbird (Anthobaphes violacea). The aim is to see whether the distribtions of these two species overlap in the Cape Peninsula.
+
+Here I am reading in observational data for each species, where I will get the latest 1000 observations.
+
+```{r}
+#Lesser double collared sunbird
+cc <- get_inat_obs(taxon_name = "Cinnyris chalybeus",
+                   maxresults = 1000)
+# Orange breasted sunbird
+av <- get_inat_obs(taxon_name = "Anthobaphes violacea",
+                   maxresults = 1000)
+```
+
+The next step is to filter the data to ensure that I only use "research grade" observations for my analysis. This means that the identifications have been verified by a few people, so they are likely to be correct. I also want to make sure that I exclude any observations that may have been birds in captivity.
+
+```{r}
+# Filtering to make sure I only get the research grade observations
+cc <- cc %>% filter(positional_accuracy<46 &
+                      latitude<0 &
+                      !is.na(latitude) &
+                      captive_cultivated == "false" &
+                      quality_grade == "research")
+av <- av %>% filter(positional_accuracy<46 &
+                      latitude<0 &
+                      !is.na(latitude) &
+                      captive_cultivated == "false" &
+                      quality_grade == "research")
+```
+
+I now am going to convert my data frame into a spatial object, while also setting the Coordinate Reference System (CRS).
+
+```{r}
+#Turning the data frame into a spatial object
+cc <- st_as_sf(cc, coords = c("longitude", "latitude"), crs = 4326)
+av <- st_as_sf(av, coords = c("longitude", "latitude"), crs = 4326)
+```
+
+Now we can plot a basic map using ggplot!
+
+```{r}
+#Plotting the points!
+ggplot() + geom_sf(data = cc)
+
+ggplot() + geom_sf(data = av)
+```
+
+Hmmm kind of just looks like a bunch of dots in a shape that mostly resembles South Africa. Not super helpful. This is where the "rosm" and "ggspatial" packages are useful. Now I'm going to add a basemap to the points I've just plotted to give them some context.
+
+```{r}
+#Plot a basic map
+ggplot() +
+  annotation_map_tile(type = "osm", progress = "none") +
+  geom_sf(data = cc) 
+
+ggplot() +
+  annotation_map_tile(type = "osm", progress = "none") +
+  geom_sf(data = av)
+```
+
+That looks a bit nicer!
+
+But it could be even better.
+
+Now I'm going to use "leaflet" to make an interactive map, so that users can navigate around South Africa, or the Cape Peninsula as they please. This map should also be in better resolution than the map plotted in ggplot.
+
+```{r}
+intmap <-leaflet() %>%
+  addTiles(group = "Default") %>%
+  addCircleMarkers(data = cc,
+                   group = "Cinnyris chalybeus",
+                   radius = 1,
+                   color = "green") %>%
+  addCircleMarkers(data = av,
+                   group = "Anthobaphes violacea",
+                   radius = 1,
+                   color = "orange") %>%
+  addLegend(position = "bottomright",
+            colors = c("orange","green"),
+            labels = c("Orange breasted","Double collared"))
+intmap
+```
+
+Now we have a super cool map with green dots for Cinnyris chalybeus and orange dots for Anthobaphes violacea. There is also a legend in the bottom right corner which is made using the addLegend function.
+
+But now I want to see if there are any environmental factors contributing to the separation of the two species. In this example I'm going to use elevation. This requires the "terra" package.
+
+```{r}
+# Read in the data that I got from the City of Cape Town.
+elevation <-  rast("cape_peninsula/cape_peninsula/CoCT_10m.tif")
+elevation
+# checking the CRS
+crs(elevation)
+```
+
+The elevation data is quite a chunky dataset, a bit bigger than what I need, so I'm going to crop it down to the relevant extent (the Cape Peninsula).
+
+```{r}
+#Crop the elevation so that the size is reduced.
+elevation <- crop(elevation, ext(c(-66642.18, -40412.18, -4019953.29, -3750723.29)))
+#Plot the elevation data
+plot(elevation)
+```
+
+I'm also going to reduce the resolution from 10m to 30m as I don't really need fine resolution data for the next step of my analysis.
+
+```{r}
+# aggregate to reduce file size
+ele30 <- aggregate(elevation, fact = 3, fun = mean)
+```
+
+Next we need to bind the species data
+
+```{r}
+#Binding cc and av
+ccBind <- rbind(cc, av)
+```
+
+Unfortunately on iNat, some people have identified the birds down to sub-species level while others haven't. This means that instead of comparing two species, we will be comparing about 5 sub-species which isn't what I want. To get around this, we will manually change the names of all of them to either "Cinnyris chalybeus" or "Anthobaphes violacea".
+
+```{r}
+# manually changing the species names
+ccBind$scientific_name <- str_replace_all(ccBind$scientific_name,
+                                    c("Cinnyris chalybeus chalybeus" = "Cinnyris chalybeus",
+                                      "Cinnyris chalybeus subalaris" = "Cinnyris chalybeus",
+                                      "Cinnyris chalybeus albilateralis" = "Cinnyris chalybeus"))
+```
+
+The next step is to make a boxplot that compares the elevation occupied by each species.
+
+```{r}
+# Making a boxplot
+ccBind %>% ggplot() +
+  geom_boxplot(aes(scientific_name, ele30))
+```
