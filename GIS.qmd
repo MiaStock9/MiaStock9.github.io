@@ -17,7 +17,7 @@ library(prettymapr)
 library(terra)
 ```
 
-The "rinat" package will be used to extract data directly from iNaturalist into R. In my case, I'm interested in the Lesser double collared sunbird (Cinnyris chalybeus) and the Orange breasted sunbird (Anthobaphes violacea). The aim is to see whether the distribtions of these two species overlap in the Cape Peninsula.
+The "rinat" package will be used to extract data directly from iNaturalist into R. In my case, I'm interested in the Lesser Double Collared Sunbird (Cinnyris chalybeus) and the Orange Breasted Sunbird (Anthobaphes violacea). The aim is to see whether the distributions of these two species overlap in the Cape Peninsula.
 
 Here I am reading in observational data for each species, where I will get the latest 1000 observations.
 
@@ -69,18 +69,27 @@ Hmmm kind of just looks like a bunch of dots in a shape that mostly resembles So
 #Plot a basic map
 ggplot() +
   annotation_map_tile(type = "osm", progress = "none") +
-  geom_sf(data = cc) 
+  geom_sf(data = cc, color = "#2E8B57") 
 
 ggplot() +
   annotation_map_tile(type = "osm", progress = "none") +
-  geom_sf(data = av)
+  geom_sf(data = av, color = "#FF7F00")
 ```
 
 That looks a bit nicer!
+Although we could also plot both datasets on the same map.
 
-But it could be even better.
+```{r}
+# Making a map with both data sets
+ggplot() +
+  annotation_map_tile(type = "osm", progress = "none") +
+  geom_sf(data=cc, color = "#2E8B57") +
+  geom_sf(data=av, color = "#FF7F00")
+```
 
-Now I'm going to use "leaflet" to make an interactive map, so that users can navigate around South Africa, or the Cape Peninsula as they please. This map should also be in better resolution than the map plotted in ggplot.
+That's a bit more informative! But I want to focus in on certain areas.
+
+So I'm going to use "leaflet" to make an interactive map, so that users can navigate around South Africa, or the Cape Peninsula as they please. This map should also be in better resolution than the map plotted in ggplot.
 
 ```{r}
 intmap <-leaflet() %>%
@@ -127,6 +136,13 @@ I'm also going to reduce the resolution from 10m to 30m as I don't really need f
 ele30 <- aggregate(elevation, fact = 3, fun = mean)
 ```
 
+I also need to save elevation as a dataframe:
+
+```{r}
+#Making elevation a data frame
+ele30 %>% as.data.frame(xy = TRUE)
+```
+
 Next we need to bind the species data
 
 ```{r}
@@ -144,10 +160,18 @@ ccBind$scientific_name <- str_replace_all(ccBind$scientific_name,
                                       "Cinnyris chalybeus albilateralis" = "Cinnyris chalybeus"))
 ```
 
-The next step is to make a boxplot that compares the elevation occupied by each species.
+Now we need to extract the data points!
+
+```{r}
+# Using terra to extract the data points
+data <- terra::extract(ele30, vect(ccBind))
+```
+
+With the data prepared, the next step is to make a boxplot that compares the elevation occupied by each species.
 
 ```{r}
 # Making a boxplot
+ccBind$elevation <- data$`10m_BA`
 ccBind %>% ggplot() +
-  geom_boxplot(aes(scientific_name, ele30))
+  geom_boxplot(aes(scientific_name, elevation), color = c("#FF7F00", "#2E8B57"))
 ```
