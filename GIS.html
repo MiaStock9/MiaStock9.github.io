@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>GIS_Project</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="GIS_files/libs/clipboard/clipboard.min.js"></script>
+<script src="GIS_files/libs/quarto-html/quarto.js"></script>
+<script src="GIS_files/libs/quarto-html/popper.min.js"></script>
+<script src="GIS_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="GIS_files/libs/quarto-html/anchor.min.js"></script>
+<link href="GIS_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="GIS_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="GIS_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="GIS_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="GIS_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="GIS_files/libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<script src="GIS_files/libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<link href="GIS_files/libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="GIS_files/libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="GIS_files/libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="GIS_files/libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="GIS_files/libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="GIS_files/libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="GIS_files/libs/leaflet-binding-2.2.1/leaflet.js"></script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">GIS_Project</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This is a GIS assignment as a requirement for BIO4000W, where I will be plotting observational data on a map. The packages needed for this assignment are: “sf”, “tidyverse”, “rinat”, “rosm”, “ggspatial”, “leaflet”, “prettymapr” and “terra”.</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.11.2, GDAL 3.7.2, PROJ 9.3.0; sf_use_s2() is TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.4.4     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     </code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rinat)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rosm)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggspatial)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(leaflet)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(prettymapr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'prettymapr'
+
+The following objects are masked from 'package:rosm':
+
+    makebbox, zoombbox</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(terra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>terra 1.7.71
+
+Attaching package: 'terra'
+
+The following object is masked from 'package:tidyr':
+
+    extract</code></pre>
+</div>
+</div>
+<p>The “rinat” package will be used to extract data directly from iNaturalist into R. In my case, I’m interested in the Lesser Double Collared Sunbird (Cinnyris chalybeus) and the Orange Breasted Sunbird (Anthobaphes violacea). The aim is to see whether the distributions of these two species overlap in the Cape Peninsula.</p>
+<p>Here I am reading in observational data for each species, where I will get the latest 1000 observations.</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Lesser double collared sunbird</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">get_inat_obs</span>(<span class="at">taxon_name =</span> <span class="st">"Cinnyris chalybeus"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">maxresults =</span> <span class="dv">1000</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Orange breasted sunbird</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>av <span class="ot">&lt;-</span> <span class="fu">get_inat_obs</span>(<span class="at">taxon_name =</span> <span class="st">"Anthobaphes violacea"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">maxresults =</span> <span class="dv">1000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The next step is to filter the data to ensure that I only use “research grade” observations for my analysis. This means that the identifications have been verified by a few people, so they are likely to be correct. I also want to make sure that I exclude any observations that may have been birds in captivity.</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtering to make sure I only get the research grade observations</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> cc <span class="sc">%&gt;%</span> <span class="fu">filter</span>(positional_accuracy<span class="sc">&lt;</span><span class="dv">46</span> <span class="sc">&amp;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                      latitude<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                      <span class="sc">!</span><span class="fu">is.na</span>(latitude) <span class="sc">&amp;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                      captive_cultivated <span class="sc">==</span> <span class="st">"false"</span> <span class="sc">&amp;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                      quality_grade <span class="sc">==</span> <span class="st">"research"</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>av <span class="ot">&lt;-</span> av <span class="sc">%&gt;%</span> <span class="fu">filter</span>(positional_accuracy<span class="sc">&lt;</span><span class="dv">46</span> <span class="sc">&amp;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                      latitude<span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                      <span class="sc">!</span><span class="fu">is.na</span>(latitude) <span class="sc">&amp;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                      captive_cultivated <span class="sc">==</span> <span class="st">"false"</span> <span class="sc">&amp;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                      quality_grade <span class="sc">==</span> <span class="st">"research"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I now am going to convert my data frame into a spatial object, while also setting the Coordinate Reference System (CRS).</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Turning the data frame into a spatial object</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cc <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(cc, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>av <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(av, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"longitude"</span>, <span class="st">"latitude"</span>), <span class="at">crs =</span> <span class="dv">4326</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can plot a basic map using ggplot!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plotting the points!</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">data =</span> cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">data =</span> av)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Hmmm kind of just looks like a bunch of dots in a shape that mostly resembles South Africa. Not super helpful. This is where the “rosm” and “ggspatial” packages are useful. Now I’m going to add a basemap to the points I’ve just plotted to give them some context.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot a basic map</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_map_tile</span>(<span class="at">type =</span> <span class="st">"osm"</span>, <span class="at">progress =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> cc, <span class="at">color =</span> <span class="st">"#2E8B57"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_map_tile</span>(<span class="at">type =</span> <span class="st">"osm"</span>, <span class="at">progress =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> av, <span class="at">color =</span> <span class="st">"#FF7F00"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That looks a bit nicer! Although we could also plot both datasets on the same map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Making a map with both data sets</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotation_map_tile</span>(<span class="at">type =</span> <span class="st">"osm"</span>, <span class="at">progress =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>cc, <span class="at">color =</span> <span class="st">"#2E8B57"</span>) <span class="sc">+</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data=</span>av, <span class="at">color =</span> <span class="st">"#FF7F00"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That’s a bit more informative! But I want to focus in on certain areas.</p>
+<p>So I’m going to use “leaflet” to make an interactive map, so that users can navigate around South Africa, or the Cape Peninsula as they please. This map should also be in better resolution than the map plotted in ggplot.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>intmap <span class="ot">&lt;-</span><span class="fu">leaflet</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>(<span class="at">group =</span> <span class="st">"Default"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> cc,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                   <span class="at">group =</span> <span class="st">"Cinnyris chalybeus"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                   <span class="at">radius =</span> <span class="dv">1</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"green"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addCircleMarkers</span>(<span class="at">data =</span> av,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">group =</span> <span class="st">"Anthobaphes violacea"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">radius =</span> <span class="dv">1</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>                   <span class="at">color =</span> <span class="st">"orange"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addLegend</span>(<span class="at">position =</span> <span class="st">"bottomright"</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"orange"</span>,<span class="st">"green"</span>),</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Orange breasted"</span>,<span class="st">"Double collared"</span>))</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>intmap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-7e6ec5d634660b152f65" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-7e6ec5d634660b152f65">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,"Default",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org/copyright/\">OpenStreetMap<\/a>,  <a href=\"https://opendatacommons.org/licenses/odbl/\">ODbL<\/a>"}]},{"method":"addCircleMarkers","args":[[-34.5211459385,-34.5211479314,-33.9331162056,-33.8816633333,-33.8647726074,-33.5702700167,-33.9925674197,-34.06040225,-34.0645509333,-33.1660786431,-33.1660341342,-33.9278128499,-34.5211833333,-34.0997510505,-33.3863460524,-33.9880857373,-34.6113783333,-33.9894830774,-32.5571939813,-32.5571939813,-32.5571939813,-33.8299915448,-33.8333666667,-34.0583874492,-34.0584089628,-33.9886741047,-34.09498,-33.5610615447,-28.5679277312,-32.961121,-33.3863845628,-33.98755,-33.98753,-32.6122022413,-33.9900149754,-33.3863240939,-33.51475418,-33.3863270451,-33.2761688319,-34.12765,-34.3494343894,-33.9275775238,-32.9612193699,-32.96124627,-32.96124497,-32.59158356,-32.61221641,-33.8386900911,-33.8389841689,-32.6135283667,-33.9297409487,-33.1825072068,-32.8004947,-32.8004947,-32.6140368167,-33.58782795,-34.0408965325,-34.0421463792,-33.5877660167,-34.0554581482,-33.066789025,-32.677206011,-33.3863360035,-33.929736819,-33.3863830348,-33.4158180556,-33.386349441,-33.98814,-33.8304813678,-34.314763,-33.3862883073,-33.98970864,-33.3863628786,-34.05944323,-33.8643624665,-33.9885608602,-34.0805083835,-33.8604658369,-33.8400202334,-33.9454843664,-32.79481206,-34.0590257315,-33.66515804,-34.0584430859,-34.4310283333,-32.3314878942,-34.39773,-33.9898093411,-33.9890145,-32.673858176,-33.9891870506,-34.3513378614,-32.6737181232,-33.9897554637,-32.6737628269,-34.0646619333,-33.3863618813,-34.334507799,-33.98814,-34.2673999444,-33.84951,-33.3863260479,-33.8946905456,-33.5992542731,-33.9888005852,-34.0438511383,-34.0764913313,-33.6966326488,-33.3572397517,-32.6771700556,-33.58869602,-33.58869602,-33.6297159201,-33.9891977438,-33.99018708,-33.9896616667,-33.9896616667,-33.8118550099,-34.0625941359,-33.9892242801,-32.95910675,-32.9590932599,-34.0589980254,-33.4820467238,-33.9907883333,-34.07323,-34.0730115239,-34.07487,-32.79276386,-34.0617666667,-33.989741044,-33.9891783333,-33.9891816667,-33.0335382026,-30.0102524845,-32.6133908554,-32.6148129572,-29.5808172871,-32.122778,-32.127222,-32.127222,-33.8658099397,-34.1552899396,-33.947025,-31.809199821,-32.61644135,-32.5906264204,-32.6119933315,-32.6119640537,-33.9892546385,-33.989190111,-33.58765092,-33.58763956,-32.373851999,-33.671275,-33.9888926642,-34.0697247569,-34.06767644,-33.98928,-34.8302813889,-33.98837081,-34.357705,-32.893,-34.3534763319,-34.35072,-34.0685125616,-33.9890586299,-33.93907,-33.9394063889,-33.93934,-28.66,-32.41,-33.960879124,-33.960898868,-33.5328805556,-32.41,-33.9894739678,-33.9894357728,-33.9892302688,-33.1255074933,-33.9889784228,-33.58780514,-33.57535894,-33.57083586,-34.0693031652,-33.98949377,-33.9892147923,-33.9906580776,-33.9907164682,-33.93922678,-33.5917767,-33.9905489472,-33.9895226551,-33.9914880033,-33.57734482,-33.57742562,-34.07601567,-34.0062466826,-33.8118256542,-34.0595097275,-30.1703769436,-32.333,-32.27,-34.350851031,-33.8115922962,-33.99116047,-30.164671309,-34.3542626554,-34.12775,-33.9907225644,-33.9902129704,-34.1979423175,-33.9893072891,-30.1626578,-33.9650239746,-33.9875271131,-30.1626667167,-33.9362436717,-30.16797,-33.9893607578,-33.9892021636,-33.9884596056,-34.2482208441,-34.0816083333,-34.0624395491,-30.1627222833,-33.9892024516,-33.989471732,-33.988610603,-34.1470739529,-33.9901062432,-33.9892521769,-34.0286143566,-33.8788880823,-33.1391518649,-34.4701,-33.9894507481,-33.9897925714,-33.9893721691,-33.9894879628,-33.9890787592,-34.2320896001,-33.5884383611,-34.0644138333,-30.2384434333,-34.3116051618,-33.9429024517,-34.0617649721,-33.9893909006,-33.3371915336,-34.3110268967,-33.8904647898,-33.9327550794,-33.9893916667,-33.9957254781,-32.6039234334,-32.6039745252,-34.043365,-34.0664998377,-33.99105,-33.9473437265,-33.9894503172,-33.9227847094,-33.9894684668,-33.7773829329,-33.989205821,-33.9893908018,-33.9907012594,-33.9891920409,-33.989214462,-34.0607833333,-33.9892916577,-33.9892671945,-33.9892093722,-33.9906066652,-33.9892436543,-33.9855139695,-33.9897092246,-33.3979838533,-33.9896638889,-33.9900033333,-31.8889457787,-34.0569811993,-33.9847666667,-33.9845166667,-33.9881061481,-33.9884530857,-33.9886354497,-33.9883018567,-33.9884263982,-33.9882707212,-33.9885242522,-32.2222013889,-32.8979966667,-32.585448,-33.93673,-34.3519631833,-33.9892343,-33.1949173559,-33.797085,-34.3357977205,-34.3357910761,-34.3358065798,-32.2245384802,-33.9915621226,-33.9889003101,-33.9877794356,-32.59028218,-34.0623278333,-32.2123672301,-32.21280032,-33.988577386,-34.4493650315,-33.9806761333,-34.4195944444,-33.94314134,-33.94321309,-33.98071876,-33.9892343,-33.98818126,-34.0658306411,-34.0653466667,-34.1908666667,-34.112745523,-34.1001166667,-33.9898675167,-33.9881553667,-32.01337886,-33.98938166,-33.99062659,-33.7800510115,-33.47487673,-33.75070806,-34.1972061113,-33.8910237744,-33.9725227572,-34.15923343,-33.9873521179,-34.3509178623,-34.1980372333,-34.0595311284,-34.0092822285,-33.9472805417,-34.07063407,-34.1986565,-33.93234,-34.055743877,-33.9896372933,-34.0685125616,-33.9107915475,-33.3862912117,-33.9905383333,-34.2014217412,-34.0535545157,-34.0657314403,-33.8946905456,-34.1950568778,-34.07115371,-34.0535033065,-34.0535033065,-33.954875,-34.0885386578,-34.198755,-33.8779448363,-33.9883416667,-33.5875660313,-33.98798,-34.0351790101,-33.7843348476,-32.8083858018,-33.91647659,-34.0287231404,-34.4760007,-34.043305,-34.0820383333,-34.4128257569,-34.4130302281,-33.81006911,-33.9186097222,-33.9908065233,-33.98965,-33.9295354571,-33.9930305657,-33.9948830112,-33.9952388142,-32.6876883333,-34.3477027176,-34.3473305278,-33.9907477235,-34.1941937121,-34.377439368,-34.10785676,-34.0790471667,-34.0617758207,-33.99098718,-33.7704335495,-34.2816552652,-32.9330704527,-29.4488032445,-33.9864179949,-33.8770518679,-33.9897288771,-34.1464493381,-34.3217610204,-34.3221839097,-33.8141376098,-34.0186208021,-33.98951238,-34.0585899616,-33.9917966334,-34.20070819,-32.9891043919,-33.4617577367,-34.4506160568,-33.3863122992,-33.76805117,-33.9904117572,-33.989591917,-33.7140580964,-33.3863481326,-34.0902133511,-34.409255,-34.4092383333,-33.9303507319,-34.0423385556,-32.4895297222,-33.8875905613,-33.9585015612,-34.3648144688,-34.3648543218,-33.987323836,-28.9577840408,-33.9887955319,-33.9890611695,-33.989432148,-32.521698475,-32.521698475,-32.521698475,-32.488867,-32.4888624917,-32.4888634928,-32.488868237,-33.83907918,-34.0606805167,-33.8795527292,-33.9891210695,-33.9886075228,-33.9885007731,-33.9892482046,-33.9892690105,-33.8328205077,-34.0260376787,-33.8981792202,-33.9895660037,-33.3863011012,-34.1966196845,-33.9454912255,-33.5079492,-33.987449832,-33.8981515778,-33.898129077,-33.8980488873,-34.0744626354,-33.9880564424,-33.9452744238,-34.3474992714,-34.3520588432,-34.0743351899,-33.3862912117,-33.9884513987,-34.0255966815,-33.3864041223,-33.3864041223,-33.8980400243,-33.8980631595,-33.98708029,-33.98702031,-33.3862908113,-33.3862908113,-33.89803867,-33.9897328167,-33.988541866,-33.7678162819,-33.9891689267,-34.3509788938,-33.7558285402,-34.05830077,-34.0583682554,-34.0588344303,-33.3863279763,-33.990104,-33.4630859246,-34.0639543766,-34.0497365046,-34.049741259,-33.3861712049,-34.1015683333,-33.9886051963,-33.9886051963,-32.6484586615,-33.836133196,-33.8361406643,-33.9883916151,-33.9483550651,-34.3502604907,-33.3863557594,-33.3863557594,-33.8329577674,-33.9462043905,-34.2459957492,-33.1252944926,-33.990493431,-34.0591815584,-32.761687],[19.4478974277,19.4478636693,18.8739856705,22.3260716667,22.4715347228,18.3773797833,22.5919118048,18.4952645,18.6387387,18.0544216687,18.054421037,18.4146147143,19.448055,18.8224741351,18.9124958217,18.4326934831,19.32908,18.4271380277,18.4735733271,18.4735733271,18.4735733271,18.4843878898,18.4915083333,18.4995485293,18.4995806109,18.4293088986,18.359843,19.5110891531,16.5084996986,18.113434,18.9123067049,18.43236,18.4322,18.2971855245,18.4278386627,18.912293294,18.32416518,18.9123822026,18.2345623394,18.9168133333,18.9271135031,18.9299780027,18.1133952599,18.1134867099,18.11346861,18.30738251,18.29723152,18.4977165043,18.4979632675,18.3029211167,18.5139808586,18.0722820747,18.14031408,18.14031408,18.30328215,18.3643731667,18.3681990365,18.3687200095,18.3646547667,23.3650260878,19.0909493527,19.2675798851,18.9123822026,18.513984297,18.9126289658,21.4039597222,18.9124304824,18.4273633333,20.0528356636,18.44975825,18.9122588419,18.43000129,18.9123982959,18.49906666,18.6094404518,18.4273716691,18.5177389989,18.6244213654,18.6373628684,19.8271790519,17.9068036501,18.4997072432,18.44326054,22.9963895988,20.71067,22.5019589751,20.61846,18.427692969,18.42740139,19.2254198385,18.4268593849,18.9270841088,19.2251998554,18.4275966833,19.2253339291,18.52026065,18.9122320198,19.0317478338,18.4273633333,20.2497249722,18.4887,18.9122507953,18.6183229244,18.451319932,18.4288960971,18.4342496772,20.4543671725,25.7936884084,18.1592434194,19.2676458294,18.36455958,18.36455958,18.44382389,18.4280464592,18.42881709,18.4303166667,18.4303133333,18.8084404214,18.8734092176,18.4273173823,18.11143088,18.11145963,18.4996379167,21.2672862226,18.4288883333,20.45486,20.4549688391,20.45524,18.13852773,18.8450283333,18.4337931668,18.42762,18.4276466667,20.2622790326,30.0644187499,18.3030710704,18.3020155199,30.2790770011,20.105833,20.09,20.09,25.090779795,18.4340258063,22.4635847222,18.7827079022,18.29629795,18.3060008243,18.2969456353,18.2969496768,18.4323351553,18.4274774776,18.36434945,18.3641756,18.9895729911,19.0534888333,18.427615799,18.8159430027,18.64892445,18.42827,20.0083130556,18.4282509,19.1170980556,28.09,20.6008937858,18.9271680556,18.8217595873,18.42738773,18.8875430556,18.8881030556,18.8881013889,29.034,20.003333,18.4900240973,18.4899500012,26.5070833333,20.003333,18.4323976149,18.4317770606,18.4316484622,18.0603715533,18.4268477326,18.36489377,18.38974728,18.3793828899,18.816129866,18.43067436,18.432943794,18.4292611621,18.4294514142,18.88820242,18.36142609,18.4290559458,18.4260706445,18.4298413548,18.38068988,18.38051847,18.52722198,18.4310391614,18.8084559112,18.4988746434,17.7885751847,22.492,22.387,18.9270034924,19.9803972749,18.42872196,17.7863194048,18.9030115306,18.9176166667,18.4288603237,18.4286672046,18.3754903916,18.4262169538,17.7776321333,18.4682958714,18.4322844853,17.7776430833,18.8645446301,17.789305,18.4316285216,18.4316446151,18.4279853716,21.8157462844,18.8942633333,18.8735738972,17.7777189667,18.4317160397,18.4322392637,18.4284118438,19.0214937391,18.4285731263,18.426861877,22.1855991706,18.5965985344,19.7370383615,20.84728,18.4321323869,18.427653098,18.4314802789,18.4273580179,18.4268001184,19.51963051,23.7527679722,23.3646866667,17.8966433,18.8214602599,22.4624441686,18.4144166484,18.4317118545,19.2175333195,18.4574859338,22.5388576124,18.8741412435,18.4316466667,18.4473624957,26.9172983026,26.9168584203,18.4377616667,18.8753215521,22.57304,22.4634043995,18.4322701853,18.3832389861,18.4322306439,18.4497373979,18.4318686447,18.4314459559,18.429188486,18.4267801014,18.4318659487,18.4945166667,18.4315241622,18.4314384644,18.4312212054,18.4289423381,18.4314829845,22.6072793624,18.4310216834,18.8775265206,18.4297222222,18.4313866667,19.2613271856,22.3700785723,22.6082833333,22.60835,18.4322909968,18.4319154875,18.4313556914,18.431906601,18.431842228,18.4317027531,18.431970974,25.4813680556,17.9078,26.910662,18.507175,18.4843529167,18.43174439,18.1257207516,22.547325,19.034395637,19.0343714971,19.034382226,25.4782147288,18.4313936756,18.4287367256,18.4330497177,26.9353906,18.8734216667,24.53733221,24.53771836,18.4297974408,20.8681461651,22.6116229667,19.2441722222,22.46206594,22.46213308,22.6116762,18.43174439,18.42999574,23.0633906275,23.0093766667,22.11149,18.913858775,23.3409866667,18.42866085,18.4285643167,18.34104497,18.42627352,18.4287927,21.3747916947,18.46835914,18.55373528,18.4504577489,20.1733780381,18.4774303863,18.32841539,18.4723001615,18.8376079526,18.4528838667,18.4982380717,18.4143905434,22.4633046983,18.4545699273,18.45410823,18.3985,23.3651129588,18.4301746022,18.8217595873,20.190948492,18.9126504235,18.4301466667,18.3818673301,18.4321219705,23.063193904,18.6183229244,22.1185930315,18.831667826,18.4564209162,18.4564209162,22.4875666667,18.4721701495,18.8227533333,18.5994709656,18.43127,18.3644490784,18.4289633333,18.4593638121,18.4524924188,17.893317143,19.8791449099,22.8009400513,19.9028478,18.437855,18.4661833333,19.1507158596,19.1508194063,18.65923771,25.2016180556,18.4290094325,18.43045,18.8834640238,22.5801750028,18.4829735782,18.4827375451,18.241095,20.6277658113,20.6284095415,18.431400432,18.433745692,20.5337155538,18.82124187,18.8568633333,18.8735901499,18.42929042,18.9556032982,19.1844890987,19.0817155364,18.2955752998,18.4298875631,18.5992687941,18.4301130186,18.8537515734,18.8245017211,18.8247096718,18.5798430575,18.3811332844,18.4280871099,18.4993372425,22.6002565804,18.375715685,18.2412049943,19.6172338666,20.4230762114,18.9124902851,20.2379083,18.4282815161,18.4272454055,19.4998747959,18.9124935865,18.8098688627,19.3607366667,19.3606466667,18.518994161,18.4339588889,26.6876163889,18.8061515678,18.4044630179,19.2662248296,19.2662979198,18.4334833571,29.2284976226,18.4276585529,18.4324451543,18.4316184258,19.2915415764,19.2915415764,19.2915415764,19.265335,19.2652616733,19.2652606723,19.2652743353,18.49743848,18.4963468,18.6002102905,18.4324904911,18.4294295584,18.4286329424,18.4326105986,18.4326293741,18.5039351176,18.4867627669,18.6476576695,18.4284954868,18.9123949177,18.4504369071,18.4216639262,18.46950646,18.4320988916,18.647931255,18.6479339373,18.6480555285,18.3984505595,18.4646665582,22.4635438743,18.9250677592,18.4845677638,18.4490528501,18.9126504235,18.429123439,18.4315925486,18.9124321704,18.9124321704,18.6480600011,18.6480197679,18.43232484,18.43237412,18.9123184489,18.9123184489,18.6480036746,18.4305323667,18.4288170938,18.4566690783,18.426790308,18.9267315821,18.470877773,18.49924344,18.499352692,18.499519815,18.9124581218,18.43131,18.7356521305,18.4354749171,18.8377452527,18.841363675,18.9126890899,18.466255,18.431679586,18.431679586,19.4094115868,18.670422131,18.6704051867,18.4294097054,22.4565591101,18.9268211982,18.9124140909,18.9124140909,18.5039074225,22.4633610156,21.9244384704,18.0606116908,18.4290919221,18.499383762,18.027515],1,null,"Cinnyris chalybeus",{"interactive":true,"className":"","stroke":true,"color":"green","weight":5,"opacity":0.5,"fill":true,"fillColor":"green","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[-34.3531142444,-34.1396175654,-34.1008381061,-33.998805,-33.9898967268,-33.357415,-33.3573533333,-33.9893042809,-33.9886741047,-33.9905425582,-34.2730257343,-33.9593283333,-33.99081,-33.9398511774,-34.0907166667,-33.9269848654,-34.0488493889,-34.1637688711,-33.9584116667,-33.9662366667,-34.0486348608,-34.3108127108,-34.0872737858,-33.99017929,-33.9596943723,-33.3810313889,-33.9725878767,-33.9875107482,-34.0173350265,-33.6964749643,-33.9876890532,-33.9911706847,-34.2653032924,-34.0584430859,-33.9591669184,-34.4142566667,-34.41456,-34.4142433333,-34.0783547999,-32.6201547365,-34.3717733333,-34.0131222167,-33.9911661291,-32.673858176,-33.9590619167,-33.960344922,-33.9665096667,-33.96980008,-33.9831675278,-34.3297331771,-33.9969496389,-34.0921861667,-32.4764466667,-34.0865543711,-34.273396,-33.9887592755,-33.9558142232,-33.9649030923,-33.9558697857,-33.9558697857,-33.9578093279,-34.5925672964,-34.3508912358,-34.3172331375,-34.3047951038,-34.3102839601,-34.3122687157,-33.9892367831,-34.10673397,-33.9598083333,-33.9652974738,-33.9606402588,-33.9598833333,-33.3178833333,-33.9602937542,-34.147590778,-33.9894154608,-33.96001,-34.3536541327,-34.3536176437,-34.1470312,-33.7192469532,-33.9905520681,-34.0223284026,-33.98945,-33.9589656081,-34.395425,-33.7974126399,-34.3478480556,-34.30963,-34.3076347222,-33.98957076,-33.9894335987,-34.0628583333,-33.9905902099,-33.98990625,-33.9407269554,-34.3184659942,-33.8830766667,-33.9906135997,-33.9903008889,-33.924965,-34.24016138,-34.4956130556,-33.9569097944,-32.7234801597,-32.7228997645,-34.254,-33.9470905796,-34.3587069863,-34.3477092651,-34.31729492,-34.32870994,-32.44684501,-32.44687932,-32.4468424001,-33.9271663872,-32.4442299501,-34.14702368,-34.14694057,-32.4239080235,-33.958428711,-34.3111276512,-33.957554727,-33.49258333,-33.9543416667,-33.8962900921,-34.22240879,-33.5940785556,-33.5884433333,-33.96047635,-33.335673,-33.3356928851,-33.3358502944,-33.58025415,-34.3090282102,-34.3302425288,-34.3269340714,-34.1141583333,-34.0852187186,-32.6402260944,-32.6401173984,-34.2606073042,-33.3446139532,-34.3076818731,-33.9585590337,-33.8606982312,-33.8725485662,-33.8893533732,-34.2554018905,-33.9592383474,-34.4012533333,-34.3590582415,-34.0026638889,-34.3164180833,-34.35358697,-34.1103310278,-34.0226902222,-33.797085,-34.0383370169,-34.1134357039,-34.1132980217,-34.1140237198,-33.9080918751,-33.9876293677,-33.9875582005,-33.987504825,-33.9874514495,-33.9876115759,-33.9873980739,-33.9874941577,-33.9874919337,-34.0982902619,-34.2937364413,-33.9541166667,-33.77735722,-33.7788616667,-33.2519837339,-34.099145,-34.09877,-33.0103714411,-33.9593200747,-33.98966265,-33.9897351,-33.9897107333,-34.315746,-34.1815357918,-34.2724158667,-34.3104493,-34.3104424667,-34.3432475,-34.3238187,-34.182,-34.3301321077,-34.3305253965,-34.28963645,-34.2352964516,-34.2622422667,-34.0808083667,-33.9673722222,-34.2323122955,-34.2318995046,-34.3564388889,-34.29173,-34.336428,-34.336428,-34.1817674,-34.336428,-34.1751510333,-34.17445145,-34.1744076,-34.3708219722,-34.6989822222,-34.231942043,-34.231984339,-34.2314773614,-34.183012455,-33.943235,-33.9698966667,-33.9716676,-34.2295179444,-34.1596851222,-33.9513277773,-34.3083859167,-33.61573,-34.0703305,-34.1938449606,-34.3563766389,-34.7247665553,-34.315068062,-33.975210996,-34.18234946,-34.3151479783,-34.3151479783,-33.9898383333,-34.00601945,-33.7038283333,-34.0237404368,-33.95975,-33.9856116667,-33.9473403715,-34.1445068501,-34.14351933,-34.14441527,-33.9577453878,-33.9577717145,-34.0142994949,-32.54792696,-32.47662789,-32.53510022,-33.9901609375,-34.3569182669,-33.9897308425,-33.9897908333,-33.98990809,-33.9921367508,-33.9990921318,-33.98916378,-33.98916629,-34.1143340556,-34.10840025,-34.31853,-34.33274,-34.32554,-34.3177,-34.3151908155,-34.3177165627,-34.3164782687,-34.0223876111,-33.69164119,-33.8706061944,-34.2095179334,-34.3075282585,-32.9198722997,-34.326932885,-33.9233533,-33.962212621,-34.4501438595,-33.9897310684,-34.5975899348,-34.5976319952,-33.6147583333,-33.7106485556,-34.0531075,-33.9885901694,-34.3927176342,-34.3576852767,-33.9890606711,-33.9884737469,-33.9894309317,-33.98749167,-34.1478659667,-33.9885193196,-33.98814,-33.9886253144,-33.98851632,-33.9884207108,-33.9596557617,-33.9590263367,-33.7332831191,-34.3071996811,-34.2987209998,-34.3026537986,-33.9893477122,-34.1543285834,-33.9875106504,-34.079975,-34.3375834,-34.3211733307,-34.1472011757,-33.9866544805,-33.08548505,-34.1466819455,-34.1540846545,-34.0419281944,-33.0449116059,-33.989743797,-34.3477696586,-34.0426048889,-33.0142950667,-33.0206427,-33.0311722333,-33.988449207,-34.0584430859,-34.0618758447,-33.9883790596,-34.2692247657,-33.961421,-33.98896819,-33.9886004207,-34.14807397,-33.967281485,-33.9488263506,-33.9763543843,-33.988511824,-33.9884269669,-33.8894960505,-34.3559438365,-34.3944144272,-33.9947441667,-34.3485912727,-33.9893315643,-34.3787154957,-33.9886051963,-33.9886051963,-33.9886051963,-33.9886051963,-34.3494551015,-33.9604813333,-34.0582551213,-34.0129065345,-33.3407179762,-34.11299086,-34.34668,-33.9775809333,-33.9611852944,-33.9907901518,-33.9966133333,-34.0885445667,-34.354645,-34.352805,-34.0910142222,-34.0886772075,-33.9618540473,-34.3525346252,-34.0946119726,-34.0910083333,-33.9345201098,-34.3438781612,-33.9418866667,-33.9351720952,-34.3220355475,-33.8658949722,-34.5404566667,-33.1163941272,-33.3578650073,-33.3575690833,-33.3621008611,-33.990576744,-33.3590333056,-33.9633990875,-33.9473354367,-33.958157746,-33.575263232,-33.35784,-33.36198,-33.3577009722,-34.321994695,-33.6950811179,-33.8608650737,-33.9799433501,-34.2623075,-33.9905705809,-33.9905828826,-33.9638202544,-34.266733318,-33.9906249897,-33.8668358583,-33.9905446225,-32.3975397634,-32.3977322649,-33.9905256727,-34.0943685833,-33.9634838187,-34.5240303523,-33.957720492,-34.1441129267,-34.0234981917,-33.9132491701,-33.9368313889,-33.5494344676,-34.3929898,-33.98925,-34.0970999167,-34.273550181,-33.9035983734,-33.9341366667,-34.1211623889,-33.8700119237,-34.30154,-33.8949153145,-34.0226978333,-33.9626201228,-33.962527728,-33.9808351854,-33.9592615462,-34.32999875,-33.8993918523,-34.3535546896,-33.958905,-33.96284,-34.25977059,-33.9294116662,-33.62326404,-33.62324846,-33.98733,-33.62439236,-33.97694652,-34.194625,-34.0628168209,-34.2888886667,-33.9522442415,-34.1509498413,-33.987906981,-33.9566846777,-33.988633916,-34.40739,-33.7343810667,-33.7349534167,-34.28722219,-34.4319474401,-34.39511565,-32.1329333333,-34.3361441111,-34.336088,-33.9911509494,-33.9979574377,-34.3425285833,-34.3425162778,-33.9560467085,-33.9897049838,-33.9665366667,-34.2563215494,-34.0113054667,-34.0113271,-34.0111697833,-34.0113891333,-34.0111682167,-34.28914316,-34.09528,-34.2044395492,-34.2045614386,-34.3527833333,-34.4210041327,-34.2253631084,-34.2922384899,-34.7235202187,-34.2081566908,-33.9898684515,-34.2723575667,-34.2511736833,-34.1116084239,-34.1012050341,-34.0954910195,-34.2758164167,-34.209746867,-34.2425683923,-34.2415789067,-34.2355391861,-34.2747069,-34.2747016389,-33.9611653531,-34.0891805,-34.3411193749,-33.989525,-34.0955,-34.360804932,-34.075051,-34.3516497053,-34.0960528333,-34.319539,-33.9583266667,-34.309324597,-34.351906354,-34.3537616667,-34.75268,-33.8972927537,-33.956295,-34.1970229393,-34.1942524157,-34.350705,-33.962855,-34.2602786111,-34.3173290897,-33.9937307477,-34.2511679046,-34.3910916667],[18.4891501674,18.3930263668,23.3766538969,18.4084666667,18.4263816448,22.0541666667,22.0531516667,18.4250214832,18.4292966181,18.4288139186,18.4541261618,18.404745,18.43001,18.3919499715,18.47008,18.9314586834,18.9981824444,18.8962916846,18.404025,18.4236833333,18.9967837091,18.8208200632,18.4127211571,18.4290668701,18.4056016508,21.4122963889,18.4155446294,18.432285875,18.4575404391,19.1163447281,18.4258694324,18.4295914694,18.4364932403,22.9963895988,18.4056172492,20.67537,20.679135,20.6749783333,18.36917512,19.0738754787,20.5401316667,18.3533466667,18.4141742469,19.2254198385,20.4453962778,18.4067773819,20.4818141667,20.47985964,20.4977196667,18.9924056069,20.4962863056,18.43012,19.27363,18.4633869624,18.392384,18.4274788179,18.4243882627,18.4152553064,18.4241969881,18.4241969881,18.4038120402,19.6843151342,18.9270936948,18.4208076944,18.4200536843,18.42169876,18.4234182677,18.426960459,18.45054701,18.4058083333,18.4239346211,18.4104910235,18.40585,22.0424888333,18.4116821364,18.4269058616,18.4270128931,18.4058216667,18.4898000775,18.489641245,18.42875937,23.8355399807,18.4292114059,19.2099333287,18.42453,18.4060489914,19.2667680556,25.0858,18.9261980556,18.819155,18.8176630556,18.42593716,18.4289763091,18.8733616667,18.4292706235,18.4264891901,19.1322351707,18.9636538479,22.3613933333,18.4292611621,18.428714973,22.460615,18.3953049001,19.8968080556,18.4155172762,18.5704521475,18.5701811974,18.856,18.4272355959,18.887970373,18.9273218176,18.42038054,18.4583515699,19.2211272,19.22104895,19.22100302,22.4981784448,19.20092629,18.3978731999,18.3979081499,19.1507068276,18.4040953448,18.9491904527,21.1931301439,19.31072167,18.8779466667,19.1710905501,19.4288350499,23.7823646111,23.7527633889,18.43262612,19.215408,19.2153349909,19.216103106,22.52964315,18.8181569346,18.8259231672,18.4441883149,18.4354783333,18.4085756656,19.2094223946,19.20941066,18.3875000671,19.222892807,18.4347259036,18.404086791,22.2583536272,22.2929008314,22.3421238582,18.421126732,18.4057100276,19.3567033333,18.8211173684,19.6939138889,18.42296015,18.48958681,18.4574868611,18.4020031111,22.5473283333,19.0386771476,18.4340377866,18.4341397105,18.4351863039,22.6670703831,18.4326790847,18.4328078307,18.432786373,18.432657627,18.4326790847,18.432722,18.4327032247,18.4326951781,23.3418056815,18.4461455772,18.4352833333,25.05558444,25.0575566667,19.7660924216,23.343285,23.3437733333,19.0602320698,18.4149671054,18.4261262,18.4262798,18.4263152667,18.823104,18.9464692198,18.4517208,18.4310764833,18.43108665,18.4608102833,18.4558023,18.946,18.9866128504,18.9865342294,18.4483789833,18.8551069992,18.4588079167,18.3964681333,18.8808527778,18.3947112693,18.3920860136,18.8285861111,18.910819,18.938409,18.938409,18.9466195667,18.938409,18.9491804833,18.9492282833,18.9492502667,20.562563,19.5909766944,18.857475362,18.8576062318,18.8652876033,18.9450774488,20.8582716667,20.81724,20.8182706,18.8718561667,18.940270953,18.4024932235,18.4337690833,19.9818116667,18.9201966667,18.9783462937,18.8285178889,19.8747176161,18.8210448742,18.3877388021,18.9455631,18.8231034623,18.8231034623,18.4264083333,18.40668,19.290945,18.4012019302,18.40422,18.4301383333,18.3989552893,18.93802165,18.9392874901,18.93819147,18.4037936427,18.4039120639,19.7271882653,19.25503872,19.27337154,19.22976561,18.4289454497,18.9410599237,18.4262535081,18.4264096167,18.4264081301,18.4270418393,18.4078465775,18.43237236,18.4323572699,18.4440284167,18.4368292778,18.82378,18.82692,18.82506,18.82356,18.8230584357,18.8235751881,18.8231567985,18.4019843333,19.1308022801,22.0215940556,18.4555877995,18.8178161904,19.0545453148,18.4438015133,22.0418483997,18.4069967884,20.4230357308,18.426061648,19.7033789041,19.7034139839,19.1073861111,19.1244648333,19.0049002,18.4289900132,19.2681861839,18.8284615671,18.4277520079,18.4285358672,18.4316076969,18.43213333,18.9357937333,18.4290878883,18.4273633333,18.4293759143,18.4286745041,18.4284398822,18.4056339264,18.406129837,18.9426419674,18.4572950323,18.454935399,18.4580406695,18.4282607456,18.4320124984,18.4322066256,18.3993033333,18.4614258,18.9646798352,18.4298913293,18.4756689146,19.0945496,18.4298747989,18.4318915008,18.3851669444,19.0552937316,18.4260624525,18.9259700217,18.3834782778,19.0687716,19.0721023833,19.0756408667,18.4286661241,22.9963895988,18.3963757487,18.4284911718,18.4616900627,18.4083827,18.42871324,18.4288538319,18.39593103,18.4261839395,18.4174454326,18.3910460118,18.4291829509,18.4283252501,19.1591267678,18.8391869595,19.276596318,18.4109390556,18.9289132878,18.4260164273,19.2731560992,18.431679586,18.431679586,18.431679586,18.431679586,18.9275297031,18.4088707333,22.9962046511,18.9988587948,21.9254008773,18.43454484,18.92724,18.4189529167,18.4076950327,18.4294298411,18.9822783333,18.9377472833,18.9184583333,18.9183283333,18.9497193333,18.9378285732,18.4118372914,18.9053246006,18.9690284592,18.9496616667,18.395156288,18.4693368897,18.40307,22.0535607296,18.961942407,22.3055809722,20.0324766667,19.7165401198,22.0560676288,22.0585211944,22.0796323056,18.4288789046,22.0582433333,18.3865404921,18.4015241311,18.4046212211,25.2535105534,22.05866,22.06006,22.0566239722,18.9642926733,19.1143847157,24.0830335886,23.6088811834,18.457566,18.4287785698,18.4289101668,18.3880050201,18.4070513025,18.4293293187,22.3059272995,18.4291760537,19.0926440844,19.0927352795,18.4291524328,18.4012619167,18.8920160045,19.493083408,18.403352201,18.322224766,21.7935356498,22.0764540516,23.8225713889,19.4051798307,19.2684284997,18.42418,18.4524524167,18.4547230406,22.4325533487,18.3901116667,18.4412301389,18.9285271303,18.44188,22.4243244389,18.4017190556,18.3877434291,18.3876803564,18.3848907018,18.4151702666,18.9558152167,19.1657892158,18.9031728838,18.404125,18.39085,18.38409863,22.4604893848,22.92429922,22.92430575,20.81266,22.9325686499,20.81266539,18.820855,18.3850806579,18.8235642222,18.4014030079,18.4308048566,18.4311277906,18.425432599,18.4293327646,19.526845,18.9421327,18.94290145,18.4107474217,19.6231971201,19.52716684,19.0144777833,18.9391734444,18.9395578333,18.4289372142,18.4089892267,18.9390693056,18.9390611389,20.2961735755,18.4322618475,18.3904366667,19.1055252653,18.9474036333,18.9474253333,18.9469890833,18.9475198333,18.9469929833,18.4485074399,23.28611,18.4488438945,18.4490315616,18.903075,19.1465305138,18.8402825273,19.028595935,19.7672711787,18.8851052674,18.4263381712,18.4514589167,18.4160113833,18.4614594151,18.4347481912,18.4245628183,18.8366636944,18.8492514755,18.8607684364,18.8627877402,18.854660744,18.83748984,18.8374959444,18.3935916388,18.4166666667,18.4710019379,18.4257383333,23.28622,18.8234283775,18.401054,18.9281574236,23.2821966667,18.848567,18.40309,18.8187063202,18.8746666088,18.902075,19.8595533333,19.1584082041,18.4309466667,18.8225506267,18.3752306818,18.9276666667,18.3910616667,18.4612936944,18.4204905108,18.417813175,18.415931426,19.27087],1,null,"Anthobaphes violacea",{"interactive":true,"className":"","stroke":true,"color":"orange","weight":5,"opacity":0.5,"fill":true,"fillColor":"orange","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["orange","green"],"labels":["Orange breasted","Double collared"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"bottomright","type":"unknown","title":null,"extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[-34.8302813889,-28.5679277312],"lng":[16.5084996986,30.2790770011]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>Now we have a super cool map with green dots for Cinnyris chalybeus and orange dots for Anthobaphes violacea. There is also a legend in the bottom right corner which is made using the addLegend function.</p>
+<p>But now I want to see if there are any environmental factors contributing to the separation of the two species. In this example I’m going to use elevation. This requires the “terra” package.</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read in the data that I got from the City of Cape Town.</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>elevation <span class="ot">&lt;-</span>  <span class="fu">rast</span>(<span class="st">"cape_peninsula/cape_peninsula/CoCT_10m.tif"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>elevation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 9902, 6518, 1  (nrow, ncol, nlyr)
+resolution  : 10, 10  (x, y)
+extent      : -64180, 1000, -3804020, -3705000  (xmin, xmax, ymin, ymax)
+coord. ref. : GCS_WGS_1984 
+source      : CoCT_10m.tif 
+name        : 10m_BA 
+min value   :    -35 
+max value   :   1590 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># checking the CRS</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">crs</span>(elevation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "PROJCRS[\"GCS_WGS_1984\",\n    BASEGEOGCRS[\"WGS 84\",\n        DATUM[\"World Geodetic System 1984\",\n            ELLIPSOID[\"WGS 84\",6378137,298.25722356049,\n                LENGTHUNIT[\"metre\",1]]],\n        PRIMEM[\"Greenwich\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433]],\n        ID[\"EPSG\",4326]],\n    CONVERSION[\"Transverse Mercator\",\n        METHOD[\"Transverse Mercator\",\n            ID[\"EPSG\",9807]],\n        PARAMETER[\"Latitude of natural origin\",0,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8801]],\n        PARAMETER[\"Longitude of natural origin\",19,\n            ANGLEUNIT[\"degree\",0.0174532925199433],\n            ID[\"EPSG\",8802]],\n        PARAMETER[\"Scale factor at natural origin\",1,\n            SCALEUNIT[\"unity\",1],\n            ID[\"EPSG\",8805]],\n        PARAMETER[\"False easting\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8806]],\n        PARAMETER[\"False northing\",0,\n            LENGTHUNIT[\"metre\",1],\n            ID[\"EPSG\",8807]]],\n    CS[Cartesian,2],\n        AXIS[\"easting\",east,\n            ORDER[1],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]],\n        AXIS[\"northing\",north,\n            ORDER[2],\n            LENGTHUNIT[\"metre\",1,\n                ID[\"EPSG\",9001]]]]"</code></pre>
+</div>
+</div>
+<p>The elevation data is quite a chunky dataset, a bit bigger than what I need, so I’m going to crop it down to the relevant extent (the Cape Peninsula).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Crop the elevation so that the size is reduced.</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>elevation <span class="ot">&lt;-</span> <span class="fu">crop</span>(elevation, <span class="fu">ext</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">66642.18</span>, <span class="sc">-</span><span class="fl">40412.18</span>, <span class="sc">-</span><span class="fl">4019953.29</span>, <span class="sc">-</span><span class="fl">3750723.29</span>)))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot the elevation data</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(elevation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I’m also going to reduce the resolution from 10m to 30m as I don’t really need fine resolution data for the next step of my analysis.</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aggregate to reduce file size</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ele30 <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(elevation, <span class="at">fact =</span> <span class="dv">3</span>, <span class="at">fun =</span> mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+|---------|---------|---------|---------|
+=========================================
+                                          </code></pre>
+</div>
+</div>
+<p>Next we need to bind the species data</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Binding cc and av</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ccBind <span class="ot">&lt;-</span> <span class="fu">rbind</span>(cc, av)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Unfortunately on iNat, some people have identified the birds down to sub-species level while others haven’t. This means that instead of comparing two species, we will be comparing about 5 sub-species which isn’t what I want. To get around this, we will manually change the names of all of them to either “Cinnyris chalybeus” or “Anthobaphes violacea”.</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># manually changing the species names</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>ccBind<span class="sc">$</span>scientific_name <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(ccBind<span class="sc">$</span>scientific_name,</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">"Cinnyris chalybeus chalybeus"</span> <span class="ot">=</span> <span class="st">"Cinnyris chalybeus"</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"Cinnyris chalybeus subalaris"</span> <span class="ot">=</span> <span class="st">"Cinnyris chalybeus"</span>,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">"Cinnyris chalybeus albilateralis"</span> <span class="ot">=</span> <span class="st">"Cinnyris chalybeus"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we need to extract the data points!</p>
+<div class="cell" data-result="hide">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using terra to extract the data points</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">extract</span>(ele30, <span class="fu">vect</span>(ccBind))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: [extract] transforming vector data to the CRS of the raster</code></pre>
+</div>
+</div>
+<p>With the data prepared, the next step is to make a boxplot that compares the elevation occupied by each species.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Making a boxplot</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>ccBind<span class="sc">$</span>elevation <span class="ot">&lt;-</span> data<span class="sc">$</span><span class="st">`</span><span class="at">10m_BA</span><span class="st">`</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>ccBind <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(scientific_name, elevation), <span class="at">color =</span> <span class="fu">c</span>(<span class="st">"#FF7F00"</span>, <span class="st">"#2E8B57"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 574 rows containing non-finite values (`stat_boxplot()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="GIS_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I should add that I have not cropped the observational data to the same extent as the elevation data and so that may influence the result of the boxplot. I’ll be sure to do this in future, but for the sake of this example I didn’t do it :)</p>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
